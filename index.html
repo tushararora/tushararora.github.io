@@ -9,10 +9,9 @@
   </head>
   <body>
 
-    <audio autoplay>
-      <source src="e.mp3" type="audio/mpeg">
-    </audio>
+  
   <a-scene>
+    <a-entity position="0 0 0" sound="src: ./e.mp3; autoplay: true"></a-entity>
     <a-entity bmfont-text="text: As sly as a fox;align:left" position="0 50 -10" scale="2 2 2">
       <a-animation attribute="position" begin="6000" from="-4 4 -10" to="0 0 10" dur="2000" easing="linear" repeat="0"></a-animation>
     </a-entity>
