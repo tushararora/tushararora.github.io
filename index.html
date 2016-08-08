@@ -6,6 +6,7 @@
         <meta name="description" content="">
         <script src="./js/aframe.min.js"></script>
         <script src="./js/aframe-bmfont-text-component.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
     </head>
     <body>
         <a-scene>
@@ -35,6 +36,7 @@
                     </a-entity>
                 </a-entity>
             </a-entity>
+        <script id="hidden-template" type="text/x-custom-template">
             <a-entity bmfont-text="text: As sly as a fox;align:left" position="0 50 -10" scale="2 2 2">
                 <a-animation attribute="position" begin="6000" from="-1.5 2.3 -10" to="-1.5 2.3 10" dur="2000" easing="linear" repeat="0"></a-animation>
                 <a-animation attribute="visible" begin="6000" dur="2000" from="true" to="false"></a-animation>
@@ -97,13 +99,14 @@
             </a-entity>
             <a-sky color="#ECECEC"></a-sky>
         </a-scene>
+        </script>
         <script>
-        var scene = document.querySelector('a-scene');
-        scene.addEventListener('loaded', function() {
+        var template = $('#hidden-template').html();
+        document.querySelector('#trigger').addEventListener('loadeddata', function() {
             document.querySelector('#trigger').play();
-        });
-        
-
+            $('a-scene').append(template);
+        })
+        ;
         var muted = false;
         var muteImage = document.querySelector("#mute-image");
         // document.getElementById('mute').style.display = 'block';
