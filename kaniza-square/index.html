@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Kaniza Square</title>
+    <meta name="description" content="">
+    <script src="../js/aframe.min.js"></script>
+    <script src="../js/aframe-bmfont-text-component.min.js"></script>
+</head>
+
+<body>
+    <a-scene>
+        <a-entity bmfont-text="text: Do you really think this figure consists of 5 shapes?;align:left" position="-4 4 0" scale="2 2 2">
+        </a-entity>
+        <a-entity bmfont-text="text: Think again!;align:left" position="-4 3.5 0" scale="2 2 2">
+        </a-entity>
+        <a-entity geometry="primitive: circle; radius: 1; thetaLength:270; " position="-1 2 0"></a-entity>
+        <a-entity geometry="primitive: circle; radius: 1; thetaLength: 270;" position="1 2 0" rotation="0 0 270">
+        </a-entity>
+        <a-entity geometry="primitive: circle; radius: 1; thetaLength: 270;" position="1 0 0" rotation="0 0 180">
+        </a-entity>
+        <a-entity geometry="primitive: circle; radius: 1; thetaLength: 270;" position="-1 0 0" rotation="0 0 90">
+        </a-entity>
+    </a-scene>
+</body>
+
+</html>
