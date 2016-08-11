@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Kaniza Square VR</title>
+    <title>Rubik's Cube Demo</title>
     <meta name="description" content="">
     <script src="../js/aframe.min.js"></script>
     <script src="../js/aframe-bmfont-text-component.min.js"></script>
@@ -11,7 +11,7 @@
     AFRAME.registerComponent('multicolored-cube', {
         init: function() {
             var mesh = this.el.getObject3D('mesh');
-            var colors = [0x009e60, 0x009e60, 0x0051ba, 0x0051ba, 0xffd500, 0xffd500, 0xff5800, 0xff5800, 0xC41E3A, 0xC41E3A, 0x25D4E8, 0x25D4E8]
+            var colors = [0x009e60, 0x009e60, 0x0051ba, 0x0051ba, 0xffd500, 0xffd500, 0xff5800, 0xff5800, 0xC41E3A, 0xC41E3A, 0xB02020, 0xB02020]
             var geom = mesh.geometry;
             for (var i = 0; i < geom.faces.length; i++) {
                 var face = geom.faces[i];
@@ -22,19 +22,12 @@
         }
     });
     </script>
-    <script>
-        for (var x = 0; x < 3; x++) {
-            for (var y = 0; y < 3; y++) {
-                for (var z = 0; z < 3; z++) {
-                    console.log(x * 3 - 3, y * 3, z * 3 - 3);
-                }
-            }
-        }
-    </script>
 </head>
 
 <body>
     <a-scene>
+        <a-entity bmfont-text="text: Rubik's Cube Demo Using A-Frame;align:left" position="-22 27 0" scale="15 15 15">
+        </a-entity>
         <a-entity position="-2 9 0">
             <a-animation easing="linear" attribute="rotation" fill="forwards" to="360 180 360" dur="3000" repeat="indefinite"></a-animation>
             <a-entity id="box" geometry="primitive: box; width: 2.9; height: 2.9; depth: 2.9" position="-3 0 -3" material="color: #FFFFFF" multicolored-cube>
