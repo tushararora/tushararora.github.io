@@ -2,93 +2,52 @@
 <html>
 
 <head>
-    <meta charset="utf-8">
-    <title>Rubik's Cube Demo</title>
-    <meta name="description" content="">
-    <script src="../js/aframe.min.js"></script>
-    <script src="../js/aframe-bmfont-text-component.min.js"></script>
-    <script>
-    AFRAME.registerComponent('multicolored-cube', {
-        init: function() {
-            var mesh = this.el.getObject3D('mesh');
-            var colors = [0x009e60, 0x009e60, 0x0051ba, 0x0051ba, 0xffd500, 0xffd500, 0xff5800, 0xff5800, 0xC41E3A, 0xC41E3A, 0xB02020, 0xB02020]
-            var geom = mesh.geometry;
-            for (var i = 0; i < geom.faces.length; i++) {
-                var face = geom.faces[i];
-                face.color.setHex(colors[i]);
-            }
-            mesh.material.vertexColors = THREE.FaceColors;
-            this.el.setObject3D('mesh', mesh);
-        }
-    });
-    </script>
+  <meta charset="utf-8">
+  <title>Rubik's Cube Demo</title>
+  <meta name="description" content="">
+  <script src="../js/aframe.min.js"></script>
+  <script src="../js/aframe-bmfont-text-component.min.js"></script>
+  <script src="../js/aframe-template-component.js"></script>
+  <script>
+  AFRAME.registerComponent('multicolored-cube', {
+    init: function() {
+      var mesh = this.el.getObject3D('mesh');
+      var colors = this.data.colors.split(',');
+      var geom = mesh.geometry;
+      for (var i = 0; i < geom.faces.length; i++) {
+          var face = geom.faces[i];
+          face.color.setHex(colors[i]);
+      }
+      mesh.material.vertexColors = THREE.FaceColors;
+      this.el.setObject3D('mesh', mesh);
+    }
+  });
+  </script>
 </head>
 
 <body>
-    <a-scene>
-        <a-entity bmfont-text="text: Rubik's Cube Demo Using A-Frame;align:left" position="-22 27 0" scale="15 15 15">
-        </a-entity>
-        <a-entity position="-2 9 0">
-            <a-animation easing="linear" attribute="rotation" fill="forwards" to="360 180 360" dur="3000" repeat="indefinite"></a-animation>
-            <a-entity id="box" geometry="primitive: box; width: 2.9; height: 2.9; depth: 2.9" position="-3 0 -3" material="color: #FFFFFF" multicolored-cube>
-            </a-entity>
-            <a-entity id="box" geometry="primitive: box; width: 2.9; height: 2.9; depth: 2.9" position="-3 0 0" material="color: #FFFFFF" multicolored-cube>
-            </a-entity>
-            <a-entity id="box" geometry="primitive: box; width: 2.9; height: 2.9; depth: 2.9" position="-3 0 3" material="color: #FFFFFF" multicolored-cube>
-            </a-entity>
-            <a-entity id="box" geometry="primitive: box; width: 2.9; height: 2.9; depth: 2.9" position="-3 3 -3" material="color: #FFFFFF" multicolored-cube>
-            </a-entity>
-            <a-entity id="box" geometry="primitive: box; width: 2.9; height: 2.9; depth: 2.9" position="-3 3 0" material="color: #FFFFFF" multicolored-cube>
-            </a-entity>
-            <a-entity id="box" geometry="primitive: box; width: 2.9; height: 2.9; depth: 2.9" position="-3 3 3" material="color: #FFFFFF" multicolored-cube>
-            </a-entity>
-            <a-entity id="box" geometry="primitive: box; width: 2.9; height: 2.9; depth: 2.9" position="-3 6 -3" material="color: #FFFFFF" multicolored-cube>
-            </a-entity>
-            <a-entity id="box" geometry="primitive: box; width: 2.9; height: 2.9; depth: 2.9" position="-3 6 0" material="color: #FFFFFF" multicolored-cube>
-            </a-entity>
-            <a-entity id="box" geometry="primitive: box; width: 2.9; height: 2.9; depth: 2.9" position="-3 6 3" material="color: #FFFFFF" multicolored-cube>
-            </a-entity>
-            <a-entity id="box" geometry="primitive: box; width: 2.9; height: 2.9; depth: 2.9" position="0 0 -3" material="color: #FFFFFF" multicolored-cube>
-            </a-entity>
-            <a-entity id="box" geometry="primitive: box; width: 2.9; height: 2.9; depth: 2.9" position="0 0 0" material="color: #FFFFFF" multicolored-cube>
-            </a-entity>
-            <a-entity id="box" geometry="primitive: box; width: 2.9; height: 2.9; depth: 2.9" position="0 0 3" material="color: #FFFFFF" multicolored-cube>
-            </a-entity>
-            <a-entity id="box" geometry="primitive: box; width: 2.9; height: 2.9; depth: 2.9" position="0 3 -3" material="color: #FFFFFF" multicolored-cube>
-            </a-entity>
-            <a-entity id="box" geometry="primitive: box; width: 2.9; height: 2.9; depth: 2.9" position="0 3 0" material="color: #FFFFFF" multicolored-cube>
-            </a-entity>
-            <a-entity id="box" geometry="primitive: box; width: 2.9; height: 2.9; depth: 2.9" position="0 3 3" material="color: #FFFFFF" multicolored-cube>
-            </a-entity>
-            <a-entity id="box" geometry="primitive: box; width: 2.9; height: 2.9; depth: 2.9" position="0 6 -3" material="color: #FFFFFF" multicolored-cube>
-            </a-entity>
-            <a-entity id="box" geometry="primitive: box; width: 2.9; height: 2.9; depth: 2.9" position="0 6 0" material="color: #FFFFFF" multicolored-cube>
-            </a-entity>
-            <a-entity id="box" geometry="primitive: box; width: 2.9; height: 2.9; depth: 2.9" position="0 6 3" material="color: #FFFFFF" multicolored-cube>
-            </a-entity>
-            <a-entity id="box" geometry="primitive: box; width: 2.9; height: 2.9; depth: 2.9" position="3 0 -3" material="color: #FFFFFF" multicolored-cube>
-            </a-entity>
-            <a-entity id="box" geometry="primitive: box; width: 2.9; height: 2.9; depth: 2.9" position="3 0 0" material="color: #FFFFFF" multicolored-cube>
-            </a-entity>
-            <a-entity id="box" geometry="primitive: box; width: 2.9; height: 2.9; depth: 2.9" position="3 0 3" material="color: #FFFFFF" multicolored-cube>
-            </a-entity>
-            <a-entity id="box" geometry="primitive: box; width: 2.9; height: 2.9; depth: 2.9" position="3 3 -3" material="color: #FFFFFF" multicolored-cube>
-            </a-entity>
-            <a-entity id="box" geometry="primitive: box; width: 2.9; height: 2.9; depth: 2.9" position="3 3 0" material="color: #FFFFFF" multicolored-cube>
-            </a-entity>
-            <a-entity id="box" geometry="primitive: box; width: 2.9; height: 2.9; depth: 2.9" position="3 3 3" material="color: #FFFFFF" multicolored-cube>
-            </a-entity>
-            <a-entity id="box" geometry="primitive: box; width: 2.9; height: 2.9; depth: 2.9" position="3 6 -3" material="color: #FFFFFF" multicolored-cube>
-            </a-entity>
-            <a-entity id="box" geometry="primitive: box; width: 2.9; height: 2.9; depth: 2.9" position="3 6 0" material="color: #FFFFFF" multicolored-cube>
-            </a-entity>
-            <a-entity id="box" geometry="primitive: box; width: 2.9; height: 2.9; depth: 2.9" position="3 6 3" material="color: #FFFFFF" multicolored-cube>
-            </a-entity>
-        </a-entity>
-        <a-entity position="0 10 30">
-            <a-entity camera look-controls wasd-controls></a-entity>
-        </a-entity>
-    </a-scene>
-</body>
 
+  <a-scene>
+    <a-assets>
+      <script id="faces" type="text/x-jade-template">
+        - for (var x = 0; x < 3; x++) {
+          - for (var y = 0; y < 3; y++) {
+            - for (var z = 0; z < 3; z++) {
+              a-entity(geometry="primitive: box; depth: 2.9; height: 2.9; width: 2.9", material="color: #FFFFFF", position="#{x * 3 - 3} #{y*3} #{z * 3 - 3}", multicolored-cube="colors: 0x009e60, 0x009e60, 0x0051ba, 0x0051ba, 0xffd500, 0xffd500, 0xff5800, 0xff5800, 0xC41E3A, 0xC41E3A, 0xB02020, 0xB02020")
+             -}
+          - }
+        - }
+      </script>
+    </a-assets>
+    <a-entity bmfont-text="text: Rubik's Cube Demo Using A-Frame;align:left" position="-22 27 0" scale="15 15 15">
+    </a-entity>
+    <a-entity position="-2 9 0">
+        <a-animation easing="linear" attribute="rotation" fill="forwards" to="360 180 360" dur="3000" repeat="indefinite"></a-animation>
+        <a-entity template="src: #faces"></a-entity>
+    </a-entity>
+    <a-entity position="0 10 30">
+      <a-entity camera look-controls wasd-controls></a-entity>
+    </a-entity>
+  </a-scene>
+</body>
 </html>
