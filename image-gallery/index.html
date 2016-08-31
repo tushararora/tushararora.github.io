@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>360 Image Gallery</title>
+  <meta name="description" content="">
+  <script src="../js/aframe.min.js"></script>
+</head>
+
+<body>
+  <a-scene>
+    <a-assets>
+      <img id="entry" src="../assets/1-entry.png">
+      <img id="left-room" src="../assets/2-left.jpg">
+      <img id="left-corner" src="../assets/3-left-corner.png">
+      <img id="right-corner" src="../assets/4-right-corner.png">
+      <img id="right-room" src="../assets/5-right.png">
+      <img id="icon" src="../assets/close-circled.png">
+      <img id="mute" src="../assets/volume-mute.png">
+    </a-assets>
+    <a-image id="left-arrow" src="#icon" position="5 1.5 -8"></a-image>
+    <a-image id="right-arrow" src="#mute" position="3.3 1.5 8"></a-image>
+    <a-entity position="0 0 0" rotation="0 90 0">
+      <a-entity camera look-controls wasd-controls>
+        <a-entity position="0 0 -3" scale="0.2 0.2 0.2"  geometry="primitive: ring; radiusOuter: 0.20;radiusInner: 0.10;" material="color: #ADD8E6; shader: flat" cursor="maxDistance: 30; fuse: true">
+            <a-animation begin="click" easing="ease-in" attribute="scale" fill="backwards" from="0.1 0.1 0.1" to="1 1 1" dur="150"></a-animation>
+            <a-animation begin="fusing" easing="ease-in" attribute="scale" fill="forwards" from="1 1 1" to="0.2 0.2 0.2" dur="1500"></a-animation>
+        </a-entity>
+      </a-entity>
+    </a-entity>
+    <a-sky id="background" radius="10" src="#entry"></a-sky>
+  </a-scene>
+  <script>
+    var currentState = 1;
+    var leftArrow = document.querySelector('#left-arrow');
+    var rightArrow = document.querySelector('#right-arrow');
+    var background = document.querySelector('#background');
+    leftArrow.addEventListener('click', function() {
+      var arrow = 1;
+      newState = getNewState(currentState, arrow);
+      if(newState === 1) {
+        background.setAttribute('src', '#entry');
+        leftArrow.setAttribute('position', {'x': 5, 'y': 1.5, 'z': -8});
+        leftArrow.setAttribute('rotation', '0 0 0');
+        rightArrow.setAttribute('position', {'x': 3.3, 'y': 1.5, 'z': 8});
+      } else if(newState === 2) {
+        background.setAttribute('src', '#left-room');
+        rightArrow.setAttribute('position', {'x': 9.5, 'y': 1.5, 'z': 1});
+        rightArrow.setAttribute('rotation', '0 90 0');
+      } else if(newState === 3) {
+        background.setAttribute('src', '#left-corner');
+      } else if(newState === 4) {
+        background.setAttribute('src', '#right-corner');
+      } else if(newState === 5) {
+        background.setAttribute('src', '#right-room');
+      }
+      currentState = newState;
+    });
+    rightArrow.addEventListener('click', function() {
+      var arrow = 2;
+      newState = getNewState(currentState, arrow);
+      if(newState === 1) {
+        background.setAttribute('src', '#entry');
+      } else if(newState === 2) {
+        background.setAttribute('src', '#left-room');
+      } else if(newState === 3) {
+
+      } else if(newState === 4) {
+
+      } else if(newState === 5) {
+        background.setAttribute('src', '#right-room');
+      }
+      currentState = newState;
+    });
+    function getNewState(state, arrow) {
+      var newState;
+      if(state === 1 && arrow === 1) {
+        newState = 2;
+      } else if(state === 1 && arrow === 2) {
+        newState = 5;
+      } else if(state === 2 && arrow === 1) {
+        newState = 1;
+      } else if(state === 2 && arrow === 2) {
+        newState = 3;
+      } else if(state === 3 && arrow === 1) {
+        newState = 2;
+      } else if(state === 3 && arrow === 2) {
+        newState = 4;
+      } else if(state === 4 && arrow === 1) {
+        newState = 3;
+      } else if(state === 4 && arrow === 2) {
+        newState = 5;
+      } else if(state === 5 && arrow === 1) {
+        newState = 4;
+      } else if(state === 5 && arrow === 2) {
+        newState = 1;
+      }
+      return newState;
+    }
+  </script>
+</body>
+</html>
