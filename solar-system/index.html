@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Solar System | A-Frame</title>
+  <meta name="description" content="">
+  <script src="../js/aframe.min.js"></script>
+  <script src="https://rawgit.com/bryik/aframe-cubemap-component/master/dist/aframe-cubemap-component.min.js"></script>
+</head>
+
+<body>
+  <a-scene>
+    <a-assets>
+      <img id="sun-map" src="../assets/planets/sun.jpg" />
+      <img id="mercury-map" src="../assets/planets/mercurymap.jpg" />
+      <img id="venus-map" src="../assets/planets/venusmap.jpg" />
+      <img id="earth-map" src="../assets/planets/earthmap4k.jpg" />
+      <img id="mars-map" src="../assets/planets/marsmap.jpg" />
+      <img id="jupiter-map" src="../assets/planets/jupitermap.jpg" />
+      <img id="saturn-map" src="../assets/planets/saturnmap.jpg" />
+      <img id="saturn-ring-map" src="../assets/planets/saturnringcolor.jpg" />
+      <img id="uranus-map" src="../assets/planets/uranusmap.jpg" />
+      <img id="uranus-ring-map" src="../assets/planets/uranusringcolor.jpg"/>
+      <img id="neptune-map" src="../assets/planets/neptunemap.jpg" />
+    </a-assets>
+    <a-sphere radius="30" position="-10 0 0" material="src: #sun-map">
+      <a-animation attribute="rotation" to="0 360 0" dur="5000" repeat="indefinite" fill="none" easing="linear"></a-animation>
+      <a-sphere radius="3" position="40 0 0" material="src: #mercury-map">
+        <a-animation attribute="rotation" to="0 360 0" dur="10000" repeat="indefinite" fill="none" easing="linear"></a-animation>
+      </a-sphere>
+    </a-sphere>
+    <a-sphere radius="9" position="-10 0 0" material="src: #sun-map">
+      <a-animation attribute="rotation" to="0 360 0" dur="10000" repeat="indefinite" fill="none" easing="linear"></a-animation>
+      <a-sphere radius="2" position="50 0 0" material="src: #venus-map">
+        <a-animation attribute="rotation" to="0 360 0" dur="10000" repeat="indefinite" fill="none" easing="linear"></a-animation>
+      </a-sphere>
+    </a-sphere>
+    <a-sphere radius="9" position="-10 0 0" material="src: #sun-map">
+      <a-animation attribute="rotation" to="0 360 0" dur="15000" repeat="indefinite" fill="none" easing="linear"></a-animation>
+      <a-sphere radius="3" position="60 0 0" material="src: #earth-map">
+        <a-animation attribute="rotation" to="0 360 0" dur="10000" repeat="indefinite" fill="none" easing="linear"></a-animation>
+      </a-sphere>
+    </a-sphere>
+    <a-sphere radius="9" position="-10 0 0" material="src: #sun-map">
+      <a-animation attribute="rotation" to="0 360 0" dur="20000" repeat="indefinite" fill="none" easing="linear"></a-animation>
+      <a-sphere radius="2.5" position="70 0 0" material="src: #mars-map">
+        <a-animation attribute="rotation" to="0 360 0" dur="10000" repeat="indefinite" fill="none" easing="linear"></a-animation>
+      </a-sphere>
+    </a-sphere>
+    <a-sphere radius="9" position="-10 0 0" material="src: #sun-map">
+      <a-animation attribute="rotation" to="0 360 0" dur="300000" repeat="indefinite" fill="none" easing="linear"></a-animation>
+      <a-sphere radius="9" position="100 0 0" material="src: #jupiter-map">
+        <a-animation attribute="rotation" to="0 360 0" dur="10000" repeat="indefinite" fill="none" easing="linear"></a-animation>
+      </a-sphere>
+    </a-sphere>
+    <a-sphere radius="9" position="-10 0 0" material="src: #sun-map" rotation="20 0 0">
+      <a-animation attribute="rotation" to="0 360 0" dur="500000" repeat="indefinite" fill="none" easing="linear"></a-animation>
+      <a-sphere radius="6" position="120 0 0" material="src: #saturn-map">
+        <a-animation attribute="rotation" dur="10000" repeat="indefinite" fill="none" easing="linear" to="0 360 0"></a-animation>
+      </a-sphere>
+      <a-entity position="120 0 0" rotation="-90 0 0">
+        <a-ring radius-inner="8" radius-outer="10" src="#saturn-ring-map">
+        </a-ring>
+      </a-entity>
+    </a-sphere>
+    <a-sphere radius="9" position="-10 0 0" material="src: #sun-map">
+      <a-animation attribute="rotation" to="0 360 0" dur="700000" repeat="indefinite" fill="none" easing="linear"></a-animation>
+      <a-sphere radius="4" position="140 0 0" material="src: #uranus-map">
+        <a-animation attribute="rotation" to="0 360 0" dur="10000" repeat="indefinite" fill="none" easing="linear"></a-animation>
+      </a-sphere>
+      <a-entity position="140 0 0">
+        <a-ring radius-inner="5" radius-outer="7" src="#uranus-ring-map">
+        </a-ring>
+      </a-entity>
+    </a-sphere>
+    <a-sphere radius="9" position="-10 0 0" material="src: #sun-map">
+      <a-animation attribute="rotation" to="0 360 0" dur="800000" repeat="indefinite" fill="none" easing="linear"></a-animation>
+      <a-sphere radius="4" position="160 0 0" material="src: #neptune-map">
+        <a-animation attribute="rotation" to="0 360 0" dur="10000" repeat="indefinite" fill="none" easing="linear"></a-animation>
+      </a-sphere>
+    </a-sphere>
+    <a-entity cubemap="folder: ../assets/planets/" edgeLength="10000"></a-entity>
+    <a-camera position="-10 10 120" look-controls-enabled wasd-controls-enabled></a-camera>
+  </a-scene>
+</body>
+
+</html>
