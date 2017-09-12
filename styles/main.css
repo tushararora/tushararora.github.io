@@ -6,49 +6,138 @@
 
 html {
   font-family: 'Quicksand', sans-serif;
+  max-width: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-font-smoothing: antialiased;
 }
 
 p {
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   margin-top: 10px;
 }
 
 h1 {
-  font-size: 3.5rem;
+  font-family: serif;
+  font-size: 5rem;
 }
 
-img {
-  width: 32px;
-  height: 32px;
+li {
+  list-style: none;
+}
+
+a {
+  color: #000000;
+  text-decoration: none;
+}
+
+.intro-wrapper, .about-wrapper, .projects-wrapper {
+  min-height: 100vh;
+  width: 100%;
+  padding: 40px 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.intro, .about, .projects {
+  width: 75vw;
 }
 
 .intro {
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  flex-grow: 1;
+  flex-shrink: 0;
+}
+
+.intro-heading, .about-heading, .projects-heading {
+  margin-bottom: 75px;
+  text-align: center;
+}
+
+.intro-body, .about-body, .projects-body {
+  padding: 0 3rem;
+  width: 100%;
 }
 
 .intro-body {
   display: flex;
   align-items: center;
-  justify-content: center;
-  flex-grow: 1;
-  flex-shrink: 0;
   flex-direction: column;
-  padding: 40px 20px;
 }
 
-.intro-icons {
+.props {
+  text-align: center;
+}
+
+.intro-icons-wrapper {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-top: 40px;
 }
 
-.intro-icons img {
+.intro-icon {
+  width: 32px;
+  height: 32px;
   margin: 0 5px;
 }
 
-.work {
-  min-height: 100vh;
+.intro-heading {
+  margin-bottom: 10px;
+}
+
+.project-item {
+  margin: 20px 0px;
+}
+
+.project-item-link {
+  font-size: 2rem;
+  border-bottom: 4px double #BBBBBB;
+}
+
+.project-item-description {
+  font-size: 1.3rem;
+  line-height: 35px;
+}
+
+.enlarge {
+  font-weight: 900;
+  font-size: 1.75rem;
+}
+
+@media screen and (max-width: 768px) {
+  h1 {
+    font-size: 4rem;
+  }
+  .about-body, .projects-body {
+    padding: 0 1rem;
+  }
+  .enlarge {
+    font-size: 1.5rem;
+  }
+  .project-item-link {
+    font-size: 1.75rem;
+  }
+  p, .project-item-description {
+    font-size: 1.2rem;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  h1 {
+    font-size: 3rem;
+  }
+  .about-body, .projects-body {
+    padding: 0 1rem;
+  }
+  .enlarge {
+    font-size: 1.3rem;
+  }
+  .project-item-link {
+    font-size: 1.5rem;
+  }
+  p, .project-item-description {
+    font-size: 1rem;
+  }
 }
