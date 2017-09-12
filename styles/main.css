@@ -110,6 +110,9 @@ a {
   h1 {
     font-size: 4rem;
   }
+  .intro, .about, .projects {
+    width: 85vw;
+  }
   .about-body, .projects-body {
     padding: 0 1rem;
   }
@@ -127,6 +130,12 @@ a {
 @media screen and (max-width: 500px) {
   h1 {
     font-size: 3rem;
+  }
+  .intro, .about, .projects {
+    width: 100vw;
+  }
+  .intro-wrapper, .about-wrapper, .projects-wrapper {
+    padding: 40px 10px;
   }
   .about-body, .projects-body {
     padding: 0 1rem;
