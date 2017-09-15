@@ -6,9 +6,14 @@
 
 html {
   font-family: 'Quicksand', sans-serif;
-  max-width: 100%;
   -webkit-font-smoothing: antialiased;
   -moz-font-smoothing: antialiased;
+}
+
+body {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 2rem;
 }
 
 p {
@@ -17,7 +22,7 @@ p {
 }
 
 h1 {
-  font-family: serif;
+  font-family: 'Merriweather', serif;
   font-size: 5rem;
 }
 
@@ -32,32 +37,19 @@ a {
 
 .intro-wrapper, .about-wrapper, .projects-wrapper {
   min-height: 100vh;
-  width: 100%;
-  padding: 40px 20px;
   display: flex;
   justify-content: center;
-}
-
-.intro, .about, .projects {
-  width: 75vw;
 }
 
 .intro {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  flex-grow: 1;
-  flex-shrink: 0;
 }
 
 .intro-heading, .about-heading, .projects-heading {
   margin-bottom: 75px;
   text-align: center;
-}
-
-.intro-body, .about-body, .projects-body {
-  padding: 0 3rem;
-  width: 100%;
 }
 
 .intro-body {
@@ -110,12 +102,6 @@ a {
   h1 {
     font-size: 4rem;
   }
-  .intro, .about, .projects {
-    width: 85vw;
-  }
-  .about-body, .projects-body {
-    padding: 0 1rem;
-  }
   .enlarge {
     font-size: 1.5rem;
   }
@@ -130,15 +116,6 @@ a {
 @media screen and (max-width: 500px) {
   h1 {
     font-size: 3rem;
-  }
-  .intro, .about, .projects {
-    width: 100vw;
-  }
-  .intro-wrapper, .about-wrapper, .projects-wrapper {
-    padding: 40px 10px;
-  }
-  .about-body, .projects-body {
-    padding: 0 1rem;
   }
   .enlarge {
     font-size: 1.3rem;
