@@ -4,6 +4,16 @@
   box-sizing: border-box;
 }
 
+.avatar {
+  width: 12.5rem;
+  height: 12.5rem;
+  position: relative;
+  margin: 0 auto;
+  padding: 2px;
+  border: 1px solid rgba(0, 0, 0, .2);
+  border-radius: 50%
+}
+
 html {
   font-family: 'Quicksand', sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -22,12 +32,12 @@ p {
 }
 
 h1 {
-  font-family: 'Merriweather', serif;
+  font-family: 'Montserrat', sans-serif;
   font-size: 5rem;
 }
 
 li {
-  list-style: none;
+  /*list-style: none;*/
 }
 
 a {
@@ -48,8 +58,14 @@ a {
 }
 
 .intro-heading, .about-heading, .projects-heading {
+  padding-top: 3rem;
   margin-bottom: 75px;
   text-align: center;
+}
+
+.intro-heading {
+  font-size: 3.5rem;
+  padding-top: 0rem
 }
 
 .intro-body {
@@ -96,6 +112,17 @@ a {
 .enlarge {
   font-weight: 900;
   font-size: 1.75rem;
+}
+
+.mozilla-logo-wrapper {
+  display: inline-block;
+  vertical-align: middle;
+  width: 100px;
+}
+
+.mozilla-logo {
+  width: 100%;
+  height: 100;
 }
 
 @media screen and (max-width: 768px) {
