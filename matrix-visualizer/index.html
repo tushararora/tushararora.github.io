@@ -1,0 +1,1653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Matrix Operations Visualizer: Multiplication & Rotation</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --card-border: #334155;
+      --accent: #38bdf8;
+      --accent-hover: #0284c7;
+      --highlight-a: #f43f5e;
+      --highlight-b: #3b82f6;
+      --highlight-res: #10b981;
+      --highlight-swap: #eab308;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --cell-size: 44px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    h1 {
+      font-size: 2rem;
+      color: #fff;
+      margin-bottom: 6px;
+      background: linear-gradient(90deg, #38bdf8, #818cf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    p.subtitle {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .tab-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      padding: 10px 22px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn:hover {
+      border-color: var(--accent);
+      color: var(--text);
+    }
+
+    .tab-btn.active {
+      background: var(--accent);
+      color: #0f172a;
+      border-color: var(--accent);
+    }
+
+    /* Layout Card */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Controls */
+    .controls-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .control-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+    }
+
+    label {
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    select, input, button {
+      background: #0f172a;
+      border: 1px solid var(--card-border);
+      color: var(--text);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    select:focus, input:focus {
+      border-color: var(--accent);
+    }
+
+    button.btn-primary {
+      background: var(--accent);
+      color: #0f172a;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    button.btn-primary:hover:not(:disabled) {
+      background: var(--accent-hover);
+    }
+
+    button.btn-secondary {
+      cursor: pointer;
+      background: #334155;
+      border-color: #475569;
+    }
+
+    button.btn-secondary:hover:not(:disabled) {
+      background: #475569;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Info & Formulas section */
+    .formula-box {
+      background: #0f172a;
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin-bottom: 20px;
+      border-left: 4px solid var(--accent);
+    }
+
+    .formula-title {
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 6px;
+      font-size: 0.95rem;
+    }
+
+    .math-formula {
+      font-family: 'Courier New', Courier, monospace;
+      color: #38bdf8;
+      font-size: 0.95rem;
+      margin-bottom: 6px;
+    }
+
+    .complexity-badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-right: 8px;
+      background: #334155;
+      color: #cbd5e1;
+    }
+
+    /* Visualization Canvas */
+    .vis-area {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 25px;
+      margin: 25px 0;
+      min-height: 220px;
+    }
+
+    .matrix-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .matrix-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .matrix-bracket {
+      display: inline-block;
+      position: relative;
+      padding: 6px 10px;
+      border-left: 3px solid #64748b;
+      border-right: 3px solid #64748b;
+      border-radius: 6px;
+      background: rgba(15, 23, 42, 0.5);
+    }
+
+    .matrix-grid {
+      display: grid;
+      gap: 6px;
+    }
+
+    .cell {
+      width: 44px;
+      height: 44px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #1e293b;
+      border: 1px solid var(--card-border);
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: all 0.25s ease;
+      position: relative;
+    }
+
+    .cell .idx {
+      font-size: 0.65rem;
+      color: #64748b;
+      font-weight: 400;
+      margin-top: 1px;
+    }
+
+    /* Active Highlight States */
+    .cell.active-a {
+      background: rgba(244, 63, 94, 0.2);
+      border-color: var(--highlight-a);
+      color: #fda4af;
+      transform: scale(1.06);
+    }
+
+    .cell.active-b {
+      background: rgba(59, 130, 246, 0.2);
+      border-color: var(--highlight-b);
+      color: #93c5fd;
+      transform: scale(1.06);
+    }
+
+    .cell.active-target {
+      background: rgba(16, 185, 129, 0.25);
+      border-color: var(--highlight-res);
+      color: #6ee7b7;
+      transform: scale(1.08);
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+    }
+
+    .cell.active-swap {
+      background: rgba(234, 179, 8, 0.25);
+      border-color: var(--highlight-swap);
+      color: #fde047;
+      transform: scale(1.08);
+    }
+
+    .op-symbol {
+      font-size: 1.6rem;
+      color: var(--text-muted);
+      font-weight: bold;
+    }
+
+    /* Explanation step box */
+    .step-box {
+      background: #0f172a;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin-top: 15px;
+    }
+
+    .step-box .title {
+      font-weight: 600;
+      color: #cbd5e1;
+      font-size: 0.9rem;
+      margin-bottom: 4px;
+    }
+
+    .step-box .details {
+      font-family: 'Courier New', Courier, monospace;
+      color: var(--accent);
+      font-size: 0.95rem;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+    }
+
+    .step-box .desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+      word-break: break-word;
+    }
+
+    /* Legend */
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      font-size: 0.8rem;
+      margin-top: 10px;
+      color: var(--text-muted);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legend-color {
+      width: 14px;
+      height: 14px;
+      border-radius: 3px;
+      border: 1px solid;
+      flex-shrink: 0;
+    }
+
+    /* Code Section Styles */
+    .code-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    .code-card {
+      background: #090d16;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .code-header {
+      background: #1e293b;
+      padding: 10px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .code-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .badge-case {
+      font-size: 0.75rem;
+      background: #334155;
+      color: #94a3b8;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .copy-btn {
+      background: #0f172a;
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      padding: 5px 12px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .copy-btn:hover {
+      color: var(--text);
+      border-color: var(--accent);
+    }
+
+    pre.code-block {
+      margin: 0;
+      padding: 14px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      font-family: 'Consolas', 'Fira Code', Monaco, monospace;
+      font-size: 0.84rem;
+      line-height: 1.5;
+      color: #e2e8f0;
+      background: #0b1120;
+    }
+
+    .code-comment { color: #64748b; }
+    .code-keyword { color: #f43f5e; font-weight: 600; }
+    .code-type { color: #38bdf8; }
+    .code-func { color: #a78bfa; }
+    .code-number { color: #f59e0b; }
+    .code-string { color: #34d399; }
+
+    /* ====================================================================
+       RESPONSIVE DESIGN (Tablets & Mobile Phones)
+       ==================================================================== */
+    @media (max-width: 768px) {
+      :root {
+        --cell-size: 38px;
+      }
+
+      body {
+        padding: 10px 8px;
+      }
+
+      h1 {
+        font-size: 1.45rem;
+      }
+
+      p.subtitle {
+        font-size: 0.82rem;
+      }
+
+      .tabs {
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .tab-btn {
+        width: 100%;
+        text-align: center;
+        padding: 10px 14px;
+        font-size: 0.9rem;
+      }
+
+      .card {
+        padding: 14px 10px;
+        border-radius: 10px;
+      }
+
+      .controls-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        padding-bottom: 12px;
+      }
+
+      .control-group {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .control-group label {
+        font-size: 0.85rem;
+        flex-shrink: 0;
+      }
+
+      .control-group select {
+        flex: 1;
+        min-width: 180px;
+        font-size: 0.85rem;
+      }
+
+      .control-group input[type="range"] {
+        flex: 1;
+        min-width: 140px;
+      }
+
+      /* Stack control buttons evenly */
+      .control-group:has(button) {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+      }
+
+      .control-group button {
+        width: 100%;
+        padding: 9px 4px;
+        font-size: 0.85rem;
+        text-align: center;
+      }
+
+      .formula-box {
+        padding: 10px 12px;
+      }
+
+      .math-formula {
+        font-size: 0.82rem;
+        word-break: break-word;
+      }
+
+      .vis-area {
+        gap: 12px;
+        margin: 15px 0;
+        /* Horizontal scroll if matrix overflow occurs on tiny phones */
+        max-width: 100%;
+        overflow-x: auto;
+        padding: 8px 4px;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .op-symbol {
+        font-size: 1.25rem;
+      }
+
+      /* Adaptive cell size on small screens */
+      .cell {
+        width: 38px;
+        height: 38px;
+        font-size: 0.82rem;
+      }
+
+      .cell .idx {
+        font-size: 0.58rem;
+      }
+
+      .matrix-bracket {
+        padding: 4px 6px;
+      }
+
+      .matrix-title {
+        font-size: 0.78rem;
+      }
+
+      .step-box {
+        padding: 10px 12px;
+      }
+
+      .step-box .title {
+        font-size: 0.82rem;
+      }
+
+      .step-box .details {
+        font-size: 0.82rem;
+      }
+
+      .step-box .desc {
+        font-size: 0.78rem;
+      }
+
+      .legend {
+        flex-direction: column;
+        gap: 6px;
+        font-size: 0.75rem;
+      }
+
+      pre.code-block {
+        padding: 10px;
+        font-size: 0.78rem;
+      }
+
+      .code-header {
+        padding: 8px 10px;
+      }
+
+      .code-title {
+        font-size: 0.85rem;
+      }
+
+      .copy-btn {
+        padding: 4px 8px;
+        font-size: 0.75rem;
+      }
+    }
+
+    @media (max-width: 420px) {
+      :root {
+        --cell-size: 32px;
+      }
+
+      .cell {
+        width: 32px;
+        height: 32px;
+        font-size: 0.75rem;
+      }
+
+      .cell .idx {
+        font-size: 0.52rem;
+      }
+
+      .matrix-grid {
+        gap: 4px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Matrix Multiplication & Rotation Visualizer</h1>
+      <p class="subtitle">Step-by-step interactive breakdown: Brute Force vs Optimal Approaches for M &times; N and N &times; N matrices</p>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('multiplication')">1. Matrix Multiplication (M &times; K &times; N)</button>
+      <button class="tab-btn" onclick="switchTab('rotation')">2. Matrix Rotation 90&deg; Clockwise (N &times; N / M &times; N)</button>
+    </div>
+
+    <!-- ================= MULTIPLICATION TAB ================= -->
+    <div id="tab-multiplication" class="tab-content active">
+      <div class="card">
+        <!-- Controls -->
+        <div class="controls-bar">
+          <div class="control-group">
+            <label>Dimensions:</label>
+            <select id="mul-dims" onchange="initMultiplication()">
+              <option value="2x3x2">A(2&times;3) &times; B(3&times;2) &rarr; C(2&times;2) [M&times;N Rectangular]</option>
+              <option value="3x3x3" selected>A(3&times;3) &times; B(3&times;3) &rarr; C(3&times;3) [N&times;N Square]</option>
+              <option value="2x2x2">A(2&times;2) &times; B(2&times;2) &rarr; C(2&times;2) [2&times;2 Small]</option>
+            </select>
+          </div>
+
+          <div class="control-group">
+            <label>Method:</label>
+            <select id="mul-method" onchange="initMultiplication()">
+              <option value="standard">Standard / Brute Force (Row &times; Col dot-product)</option>
+              <option value="cache-optimal">Cache-Friendly Optimal (Loop Reordering: i-k-j)</option>
+            </select>
+          </div>
+
+          <div class="control-group">
+            <button class="btn-primary" id="mul-play-btn" onclick="togglePlayMul()">Play</button>
+            <button class="btn-secondary" onclick="stepMul()">Next Step</button>
+            <button class="btn-secondary" onclick="initMultiplication()">Reset</button>
+          </div>
+
+          <div class="control-group">
+            <label>Speed:</label>
+            <input type="range" id="mul-speed" min="200" max="1500" value="700" step="100" />
+          </div>
+        </div>
+
+        <!-- Formula & Steps explanation -->
+        <div class="formula-box">
+          <div class="formula-title">Mathematical Formula & Approach Details</div>
+          <div class="math-formula" id="mul-formula-text">
+            C[i][j] = &sum;<sub>k=0</sub><sup>K-1</sup> (A[i][k] &times; B[k][j])
+          </div>
+          <div>
+            <span class="complexity-badge">Time: O(M &times; K &times; N) = O(N&sup3;) for square</span>
+            <span class="complexity-badge" id="mul-space-badge">Auxiliary Space: O(1) in-place allocation for result</span>
+          </div>
+          <div id="mul-method-desc" style="font-size: 0.85rem; color: var(--text-muted); margin-top: 6px;">
+            Standard dot product: Row <code>i</code> of Matrix A is multiplied element-wise by Column <code>j</code> of Matrix B and summed into <code>C[i][j]</code>.
+          </div>
+        </div>
+
+        <!-- Visualization Grids -->
+        <div class="vis-area">
+          <div class="matrix-wrapper">
+            <span class="matrix-title" id="mul-label-a">Matrix A (3&times;3)</span>
+            <div class="matrix-bracket">
+              <div class="matrix-grid" id="matrix-a"></div>
+            </div>
+          </div>
+
+          <div class="op-symbol">&times;</div>
+
+          <div class="matrix-wrapper">
+            <span class="matrix-title" id="mul-label-b">Matrix B (3&times;3)</span>
+            <div class="matrix-bracket">
+              <div class="matrix-grid" id="matrix-b"></div>
+            </div>
+          </div>
+
+          <div class="op-symbol">=</div>
+
+          <div class="matrix-wrapper">
+            <span class="matrix-title" id="mul-label-c">Result Matrix C (3&times;3)</span>
+            <div class="matrix-bracket">
+              <div class="matrix-grid" id="matrix-c"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Legend -->
+        <div class="legend">
+          <div class="legend-item">
+            <div class="legend-color" style="border-color: var(--highlight-a); background: rgba(244,63,94,0.3)"></div>
+            <span>Matrix A element: A[i][k]</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color" style="border-color: var(--highlight-b); background: rgba(59,130,246,0.3)"></div>
+            <span>Matrix B element: B[k][j]</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color" style="border-color: var(--highlight-res); background: rgba(16,185,129,0.3)"></div>
+            <span>Target / Accumulator: C[i][j]</span>
+          </div>
+        </div>
+
+        <!-- Current Step Details -->
+        <div class="step-box">
+          <div class="title" id="mul-step-title">Step 0: Ready</div>
+          <div class="details" id="mul-step-math">Click 'Next Step' or 'Play' to start visualization</div>
+          <div class="desc" id="mul-step-desc">Iterating over indices...</div>
+        </div>
+
+        <!-- Dynamic TypeScript Code Section for Multiplication -->
+        <div style="margin-top: 25px;">
+          <h3 style="font-size: 1.05rem; margin-bottom: 12px; color: var(--accent); display: flex; align-items: center; gap: 8px;">
+            <span>TypeScript Implementation(s) for Selected Method</span>
+          </h3>
+          <div id="mul-code-container" class="code-grid"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= ROTATION TAB ================= -->
+    <div id="tab-rotation" class="tab-content">
+      <div class="card">
+        <!-- Controls -->
+        <div class="controls-bar">
+          <div class="control-group">
+            <label>Matrix Type:</label>
+            <select id="rot-type" onchange="initRotation()">
+              <option value="square-3x3" selected>3 &times; 3 Square Matrix (N &times; N)</option>
+              <option value="square-4x4">4 &times; 4 Square Matrix (N &times; N)</option>
+              <option value="rect-2x3">2 &times; 3 Rectangular Matrix (M &times; N)</option>
+            </select>
+          </div>
+
+          <div class="control-group">
+            <label>Approach:</label>
+            <select id="rot-approach" onchange="handleRotationApproachChange()">
+              <option value="optimal">Optimal In-Place: Transpose + Reverse Rows (Square only, O(1) Space)</option>
+              <option value="brute">Brute Force: Using New Matrix (M&times;N or N&times;N, O(M&times;N) Space)</option>
+            </select>
+          </div>
+
+          <div class="control-group">
+            <button class="btn-primary" id="rot-play-btn" onclick="togglePlayRot()">Play</button>
+            <button class="btn-secondary" onclick="stepRot()">Next Step</button>
+            <button class="btn-secondary" onclick="initRotation()">Reset</button>
+          </div>
+
+          <div class="control-group">
+            <label>Speed:</label>
+            <input type="range" id="rot-speed" min="200" max="1500" value="700" step="100" />
+          </div>
+        </div>
+
+        <!-- Formula & Steps explanation -->
+        <div class="formula-box">
+          <div class="formula-title" id="rot-formula-title">Rotation 90&deg; Clockwise Details</div>
+          <div class="math-formula" id="rot-formula-text">
+            Step 1: Transpose: swap(A[i][j], A[j][i]) &nbsp;|&nbsp; Step 2: Reverse each row: swap(A[i][j], A[i][N - 1 - j])
+          </div>
+          <div>
+            <span class="complexity-badge" id="rot-time-badge">Time: O(N&sup2;)</span>
+            <span class="complexity-badge" id="rot-space-badge">Space: O(1) Auxiliary (In-Place)</span>
+          </div>
+          <div id="rot-method-desc" style="font-size: 0.85rem; color: var(--text-muted); margin-top: 6px;">
+            In-place rotation operates directly on the same matrix in two sub-phases: first swapping elements across the main diagonal (Transpose), then mirroring columns horizontally (Reverse rows).
+          </div>
+        </div>
+
+        <!-- Visualization Grids -->
+        <div class="vis-area" id="rot-vis-area">
+          <div class="matrix-wrapper" id="rot-wrapper-src">
+            <span class="matrix-title" id="rot-label-src">Matrix A</span>
+            <div class="matrix-bracket">
+              <div class="matrix-grid" id="rot-grid-src"></div>
+            </div>
+          </div>
+
+          <div class="op-symbol" id="rot-op-arrow" style="display:none;">&rarr;</div>
+
+          <div class="matrix-wrapper" id="rot-wrapper-dest" style="display:none;">
+            <span class="matrix-title" id="rot-label-dest">Rotated Matrix B</span>
+            <div class="matrix-bracket">
+              <div class="matrix-grid" id="rot-grid-dest"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Legend -->
+        <div class="legend" id="rot-legend">
+          <div class="legend-item" id="rot-legend-swap">
+            <div class="legend-color" style="border-color: var(--highlight-swap); background: rgba(234,179,8,0.3)"></div>
+            <span>Elements being swapped / moved</span>
+          </div>
+          <div class="legend-item" id="rot-legend-target">
+            <div class="legend-color" style="border-color: var(--highlight-res); background: rgba(16,185,129,0.3)"></div>
+            <span>Placed / Completed element</span>
+          </div>
+        </div>
+
+        <!-- Current Step Details -->
+        <div class="step-box">
+          <div class="title" id="rot-step-title">Phase: Ready</div>
+          <div class="details" id="rot-step-math">Click 'Next Step' or 'Play' to start visualization</div>
+          <div class="desc" id="rot-step-desc">Starting state...</div>
+        </div>
+
+        <!-- Dynamic TypeScript Code Section for Rotation -->
+        <div style="margin-top: 25px;">
+          <h3 style="font-size: 1.05rem; margin-bottom: 12px; color: var(--accent); display: flex; align-items: center; gap: 8px;">
+            <span>TypeScript Implementation(s) for Selected Method</span>
+          </h3>
+          <div id="rot-code-container" class="code-grid"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ====================================================================
+       TAB LOGIC
+       ==================================================================== */
+    function switchTab(tab) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+      if (tab === 'multiplication') {
+        document.querySelectorAll('.tab-btn')[0].classList.add('active');
+        document.getElementById('tab-multiplication').classList.add('active');
+        pauseRot();
+      } else if (tab === 'rotation') {
+        document.querySelectorAll('.tab-btn')[1].classList.add('active');
+        document.getElementById('tab-rotation').classList.add('active');
+        pauseMul();
+      }
+    }
+
+    /* ====================================================================
+       1. MATRIX MULTIPLICATION VISUALIZER
+       ==================================================================== */
+    let mulA = [], mulB = [], mulC = [];
+    let mulSteps = [];
+    let mulCurrentStepIdx = 0;
+    let mulTimer = null;
+
+    function initMultiplication() {
+      pauseMul();
+      const dimType = document.getElementById('mul-dims').value;
+      const method = document.getElementById('mul-method').value;
+
+      let M, K, N;
+      if (dimType === '2x3x2') { M = 2; K = 3; N = 2; }
+      else if (dimType === '3x3x3') { M = 3; K = 3; N = 3; }
+      else if (dimType === '2x2x2') { M = 2; K = 2; N = 2; }
+
+      // Generate clean small integer matrices
+      mulA = [];
+      let valA = 1;
+      for (let i = 0; i < M; i++) {
+        let row = [];
+        for (let j = 0; j < K; j++) row.push(valA++);
+        mulA.push(row);
+      }
+
+      mulB = [];
+      let valB = 1;
+      for (let i = 0; i < K; i++) {
+        let row = [];
+        for (let j = 0; j < N; j++) row.push((valB % 4) + 1);
+        mulB.push(row);
+      }
+
+      // Initialize Result C with 0
+      mulC = Array.from({ length: M }, () => Array(N).fill(0));
+
+      // Render grids
+      renderGrid('matrix-a', mulA, 'cell-a');
+      renderGrid('matrix-b', mulB, 'cell-b');
+      renderGrid('matrix-c', mulC, 'cell-c', true);
+
+      document.getElementById('mul-label-a').textContent = `Matrix A (${M} \u00D7 ${K})`;
+      document.getElementById('mul-label-b').textContent = `Matrix B (${K} \u00D7 ${N})`;
+      document.getElementById('mul-label-c').textContent = `Result C (${M} \u00D7 ${N})`;
+
+      // Prepare steps depending on method
+      generateMulSteps(M, K, N, method);
+      mulCurrentStepIdx = 0;
+
+      // Update info cards
+      if (method === 'standard') {
+        document.getElementById('mul-formula-text').innerHTML = 'C[i][j] = &sum;<sub>k=0</sub><sup>K-1</sup> (A[i][k] &times; B[k][j])';
+        document.getElementById('mul-method-desc').textContent = 'Brute Force / Standard (i-j-k loop order): Computes one cell C[i][j] completely by taking the dot product of Row i of A and Column j of B.';
+      } else {
+        document.getElementById('mul-formula-text').innerHTML = 'for i &rarr; for k &rarr; for j: &nbsp; C[i][j] += A[i][k] &times; B[k][j]';
+        document.getElementById('mul-method-desc').textContent = 'Cache-Friendly Optimal (i-k-j loop order): Iterates sequentially along rows of B and C in memory (spatial locality), reducing CPU cache misses significantly.';
+      }
+
+      updateMulStepUI();
+      renderMulCode(method);
+    }
+
+    function renderGrid(containerId, matrix, prefix, showInitialPlaceholder = false) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = '';
+      const rows = matrix.length;
+      const cols = matrix[0].length;
+      container.style.gridTemplateColumns = `repeat(${cols}, var(--cell-size, 44px))`;
+
+      for (let i = 0; i < rows; i++) {
+        for (let j = 0; j < cols; j++) {
+          const div = document.createElement('div');
+          div.className = 'cell';
+          div.id = `${prefix}-${i}-${j}`;
+          const val = showInitialPlaceholder ? 0 : matrix[i][j];
+          div.innerHTML = `<span class="val">${val}</span><span class="idx">[${i},${j}]</span>`;
+          container.appendChild(div);
+        }
+      }
+    }
+
+    function generateMulSteps(M, K, N, method) {
+      mulSteps = [];
+      let tempC = Array.from({ length: M }, () => Array(N).fill(0));
+
+      if (method === 'standard') {
+        // i -> j -> k
+        for (let i = 0; i < M; i++) {
+          for (let j = 0; j < N; j++) {
+            let runningSum = 0;
+            for (let k = 0; k < K; k++) {
+              const product = mulA[i][k] * mulB[k][j];
+              const prev = runningSum;
+              runningSum += product;
+              tempC[i][j] = runningSum;
+              mulSteps.push({
+                type: 'mul_standard_step',
+                i, j, k,
+                a_val: mulA[i][k],
+                b_val: mulB[k][j],
+                product: product,
+                prevSum: prev,
+                newSum: runningSum,
+                isDoneCell: (k === K - 1)
+              });
+            }
+          }
+        }
+      } else {
+        // Cache friendly i -> k -> j
+        for (let i = 0; i < M; i++) {
+          for (let k = 0; k < K; k++) {
+            for (let j = 0; j < N; j++) {
+              const product = mulA[i][k] * mulB[k][j];
+              const prev = tempC[i][j];
+              tempC[i][j] += product;
+              mulSteps.push({
+                type: 'mul_cache_step',
+                i, j, k,
+                a_val: mulA[i][k],
+                b_val: mulB[k][j],
+                product: product,
+                prevSum: prev,
+                newSum: tempC[i][j],
+                isDoneCell: false // will highlight active
+              });
+            }
+          }
+        }
+      }
+    }
+
+    function updateMulStepUI() {
+      // Clear all active classes
+      document.querySelectorAll('#matrix-a .cell').forEach(c => c.classList.remove('active-a'));
+      document.querySelectorAll('#matrix-b .cell').forEach(c => c.classList.remove('active-b'));
+      document.querySelectorAll('#matrix-c .cell').forEach(c => c.classList.remove('active-target'));
+
+      if (mulCurrentStepIdx === 0) {
+        document.getElementById('mul-step-title').textContent = 'Step 0: Ready';
+        document.getElementById('mul-step-math').textContent = 'Click "Next Step" or "Play" to start';
+        document.getElementById('mul-step-desc').textContent = 'Initial matrices populated.';
+        return;
+      }
+
+      const step = mulSteps[mulCurrentStepIdx - 1];
+
+      // Highlight active cells
+      const cellA = document.getElementById(`cell-a-${step.i}-${step.k}`);
+      const cellB = document.getElementById(`cell-b-${step.k}-${step.j}`);
+      const cellC = document.getElementById(`cell-c-${step.i}-${step.j}`);
+
+      if (cellA) cellA.classList.add('active-a');
+      if (cellB) cellB.classList.add('active-b');
+      if (cellC) {
+        cellC.classList.add('active-target');
+        cellC.querySelector('.val').textContent = step.newSum;
+      }
+
+      document.getElementById('mul-step-title').textContent = 
+        `Step ${mulCurrentStepIdx} of ${mulSteps.length} [i=${step.i}, k=${step.k}, j=${step.j}]`;
+      
+      document.getElementById('mul-step-math').innerHTML = 
+        `C[${step.i}][${step.j}] = ${step.prevSum} + (A[${step.i}][${step.k}] &times; B[${step.k}][${step.j}]) = ${step.prevSum} + (${step.a_val} &times; ${step.b_val}) = <strong>${step.newSum}</strong>`;
+
+      document.getElementById('mul-step-desc').textContent = step.isDoneCell 
+        ? `&bull; Completed dot product for row ${step.i} and col ${step.j}. Cell C[${step.i}][${step.j}] finalized!`
+        : `Accumulating dot product term (${step.a_val} * ${step.b_val} = ${step.product}) into accumulator C[${step.i}][${step.j}].`;
+    }
+
+    function stepMul() {
+      if (mulCurrentStepIdx < mulSteps.length) {
+        mulCurrentStepIdx++;
+        updateMulStepUI();
+      } else {
+        pauseMul();
+      }
+    }
+
+    function togglePlayMul() {
+      if (mulTimer) {
+        pauseMul();
+      } else {
+        if (mulCurrentStepIdx >= mulSteps.length) {
+          mulCurrentStepIdx = 0;
+          initMultiplication();
+        }
+        document.getElementById('mul-play-btn').textContent = 'Pause';
+        const speed = 1700 - parseInt(document.getElementById('mul-speed').value);
+        mulTimer = setInterval(() => {
+          if (mulCurrentStepIdx < mulSteps.length) {
+            stepMul();
+          } else {
+            pauseMul();
+          }
+        }, speed);
+      }
+    }
+
+    function pauseMul() {
+      if (mulTimer) {
+        clearInterval(mulTimer);
+        mulTimer = null;
+      }
+      const btn = document.getElementById('mul-play-btn');
+      if (btn) btn.textContent = 'Play';
+    }
+
+
+    /* ====================================================================
+       2. MATRIX ROTATION VISUALIZER
+       ==================================================================== */
+    let rotMatrix = [];
+    let rotSteps = [];
+    let rotCurrentStepIdx = 0;
+    let rotTimer = null;
+
+    function handleRotationApproachChange() {
+      const type = document.getElementById('rot-type').value;
+      const approach = document.getElementById('rot-approach').value;
+
+      if (type.startsWith('rect-') && approach === 'optimal') {
+        alert("Note: True in-place rotation without extra memory only works for Square matrices (N x N) because matrix dimensions stay identical. For rectangular matrices (M x N -> N x M), auxiliary memory or cycle-leader algorithms are required. Switching to Brute Force (Auxiliary Matrix).");
+        document.getElementById('rot-approach').value = 'brute';
+      }
+      initRotation();
+    }
+
+    function initRotation() {
+      pauseRot();
+      const type = document.getElementById('rot-type').value;
+      const approachSelect = document.getElementById('rot-approach');
+      
+      let rows, cols;
+      if (type === 'square-3x3') { rows = 3; cols = 3; }
+      else if (type === 'square-4x4') { rows = 4; cols = 4; }
+      else if (type === 'rect-2x3') { 
+        rows = 2; cols = 3; 
+        if (approachSelect.value === 'optimal') {
+          approachSelect.value = 'brute';
+        }
+      }
+
+      const approach = approachSelect.value;
+
+      // Fill matrix with sequential numbers
+      rotMatrix = [];
+      let val = 1;
+      for (let i = 0; i < rows; i++) {
+        let r = [];
+        for (let j = 0; j < cols; j++) r.push(val++);
+        rotMatrix.push(r);
+      }
+
+      const opArrow = document.getElementById('rot-op-arrow');
+      const destWrapper = document.getElementById('rot-wrapper-dest');
+
+      if (approach === 'optimal') {
+        // Optimal In-Place
+        opArrow.style.display = 'none';
+        destWrapper.style.display = 'none';
+        document.getElementById('rot-label-src').textContent = `Square Matrix (${rows}\u00D7${cols}) - In-Place`;
+        renderGrid('rot-grid-src', rotMatrix, 'rot-src');
+
+        document.getElementById('rot-formula-title').textContent = 'Optimal In-Place 90\u00B0 Clockwise Rotation (Square N\u00D7N)';
+        document.getElementById('rot-formula-text').innerHTML = 
+          'Phase 1: Transpose matrix [swap(A[i][j], A[j][i])] <br>Phase 2: Reverse each row [swap(A[i][j], A[i][N - 1 - j])]';
+        document.getElementById('rot-time-badge').textContent = `Time: O(N\u00B2) [${rows * rows} ops]`;
+        document.getElementById('rot-space-badge').textContent = 'Auxiliary Space: O(1) [In-Place, No Extra Grid]';
+        document.getElementById('rot-method-desc').textContent = 
+          'No auxiliary 2D array allocated. Step 1 reflects elements across the top-left to bottom-right diagonal. Step 2 mirrors columns horizontally to yield 90\u00B0 clockwise rotation.';
+
+        generateOptimalRotSteps(rows);
+      } else {
+        // Brute force / Out-of-place (works for both N x N and M x N)
+        opArrow.style.display = 'block';
+        destWrapper.style.display = 'flex';
+        document.getElementById('rot-label-src').textContent = `Source Matrix (${rows}\u00D7${cols})`;
+        document.getElementById('rot-label-dest').textContent = `Rotated Matrix Result (${cols}\u00D7${rows})`;
+
+        renderGrid('rot-grid-src', rotMatrix, 'rot-src');
+        const emptyDest = Array.from({ length: cols }, () => Array(rows).fill('-'));
+        renderGrid('rot-grid-dest', emptyDest, 'rot-dest');
+
+        document.getElementById('rot-formula-title').textContent = 
+          type.startsWith('rect') 
+            ? 'Brute Force 90\u00B0 Clockwise Rotation for Rectangular Matrix (M\u00D7N &rarr; N\u00D7M)' 
+            : 'Brute Force 90\u00B0 Clockwise Rotation (Auxiliary Matrix)';
+        document.getElementById('rot-formula-text').innerHTML = 'Result[j][M - 1 - i] = Source[i][j]';
+        document.getElementById('rot-time-badge').textContent = `Time: O(M \u00D7 N)`;
+        document.getElementById('rot-space-badge').textContent = `Auxiliary Space: O(M \u00D7 N) [Allocates new ${cols}\u00D7${rows} matrix]`;
+        document.getElementById('rot-method-desc').textContent = 
+          'Maps every element from cell (i, j) in the original M\u00D7N matrix to column M - 1 - i and row j of an auxiliary N\u00D7M output matrix.';
+
+        generateBruteRotSteps(rows, cols);
+      }
+
+      rotCurrentStepIdx = 0;
+      updateRotStepUI();
+      renderRotCode(approach, type);
+    }
+
+    function generateOptimalRotSteps(N) {
+      rotSteps = [];
+      let clone = rotMatrix.map(row => [...row]);
+
+      // Phase 1: Transpose (swap clone[i][j] with clone[j][i] for j > i)
+      for (let i = 0; i < N; i++) {
+        for (let j = i + 1; j < N; j++) {
+          const val1 = clone[i][j];
+          const val2 = clone[j][i];
+          clone[i][j] = val2;
+          clone[j][i] = val1;
+          rotSteps.push({
+            phase: 'transpose',
+            r1: i, c1: j, val1: val1,
+            r2: j, c2: i, val2: val2,
+            snapshot: clone.map(r => [...r]),
+            desc: `Transpose: Swapping element [${i}][${j}] (${val1}) with symmetric element [${j}][${i}] (${val2}) across diagonal.`
+          });
+        }
+      }
+
+      // Phase 2: Reverse each row
+      for (let i = 0; i < N; i++) {
+        for (let j = 0; j < Math.floor(N / 2); j++) {
+          const c2 = N - 1 - j;
+          const val1 = clone[i][j];
+          const val2 = clone[i][c2];
+          clone[i][j] = val2;
+          clone[i][c2] = val1;
+          rotSteps.push({
+            phase: 'reverse',
+            r1: i, c1: j, val1: val1,
+            r2: i, c2: c2, val2: val2,
+            snapshot: clone.map(r => [...r]),
+            desc: `Reverse Row ${i}: Swapping column ${j} (${val1}) with symmetric column ${c2} (${val2}).`
+          });
+        }
+      }
+    }
+
+    function generateBruteRotSteps(M, N) {
+      rotSteps = [];
+      let dest = Array.from({ length: N }, () => Array(M).fill('-'));
+
+      for (let i = 0; i < M; i++) {
+        for (let j = 0; j < N; j++) {
+          const destR = j;
+          const destC = M - 1 - i;
+          const val = rotMatrix[i][j];
+          dest[destR][destC] = val;
+          rotSteps.push({
+            phase: 'brute',
+            srcR: i, srcC: j,
+            destR: destR, destC: destC,
+            val: val,
+            snapshotDest: dest.map(r => [...r]),
+            desc: `Mapping Source[${i}][${j}] (${val}) &rarr; Result[${destR}][${destC}] (Formula: [j][M - 1 - i])`
+          });
+        }
+      }
+    }
+
+    function updateRotStepUI() {
+      // Clear highlights
+      document.querySelectorAll('#rot-grid-src .cell').forEach(c => {
+        c.classList.remove('active-swap', 'active-target', 'active-a', 'active-b');
+      });
+      document.querySelectorAll('#rot-grid-dest .cell').forEach(c => {
+        c.classList.remove('active-swap', 'active-target', 'active-a', 'active-b');
+      });
+
+      if (rotCurrentStepIdx === 0) {
+        document.getElementById('rot-step-title').textContent = 'Ready';
+        document.getElementById('rot-step-math').textContent = 'Click "Next Step" or "Play" to start';
+        document.getElementById('rot-step-desc').textContent = 'Original matrix loaded.';
+        // Reset displayed values to initial
+        const approach = document.getElementById('rot-approach').value;
+        if (approach === 'optimal') {
+          renderGrid('rot-grid-src', rotMatrix, 'rot-src');
+        } else {
+          renderGrid('rot-grid-src', rotMatrix, 'rot-src');
+          const type = document.getElementById('rot-type').value;
+          let cols = type === 'rect-2x3' ? 3 : (type === 'square-4x4' ? 4 : 3);
+          let rows = type === 'rect-2x3' ? 2 : (type === 'square-4x4' ? 4 : 3);
+          const empty = Array.from({ length: cols }, () => Array(rows).fill('-'));
+          renderGrid('rot-grid-dest', empty, 'rot-dest');
+        }
+        return;
+      }
+
+      const step = rotSteps[rotCurrentStepIdx - 1];
+
+      if (step.phase === 'transpose' || step.phase === 'reverse') {
+        // Optimal In-Place
+        const phaseName = step.phase === 'transpose' ? 'Phase 1: Transpose' : 'Phase 2: Row Reversal';
+        document.getElementById('rot-step-title').textContent = `${phaseName} (Step ${rotCurrentStepIdx} / ${rotSteps.length})`;
+        
+        // Update matrix cells values to match this step snapshot
+        for (let r = 0; r < step.snapshot.length; r++) {
+          for (let c = 0; c < step.snapshot[r].length; c++) {
+            const cell = document.getElementById(`rot-src-${r}-${c}`);
+            if (cell) cell.querySelector('.val').textContent = step.snapshot[r][c];
+          }
+        }
+
+        const cell1 = document.getElementById(`rot-src-${step.r1}-${step.c1}`);
+        const cell2 = document.getElementById(`rot-src-${step.r2}-${step.c2}`);
+        if (cell1) cell1.classList.add('active-swap');
+        if (cell2) cell2.classList.add('active-swap');
+
+        document.getElementById('rot-step-math').innerHTML = 
+          step.phase === 'transpose'
+            ? `swap( A[${step.r1}][${step.c1}], A[${step.r2}][${step.c2}] ) &nbsp;&hArr;&nbsp; swap( ${step.val1}, ${step.val2} )`
+            : `swap( A[${step.r1}][${step.c1}], A[${step.r1}][${step.c2}] ) &nbsp;&hArr;&nbsp; swap( ${step.val1}, ${step.val2} )`;
+
+        document.getElementById('rot-step-desc').textContent = step.desc;
+
+      } else {
+        // Brute force
+        document.getElementById('rot-step-title').textContent = `Brute Force Mapping (Step ${rotCurrentStepIdx} / ${rotSteps.length})`;
+        
+        // Update destination cells
+        for (let r = 0; r < step.snapshotDest.length; r++) {
+          for (let c = 0; c < step.snapshotDest[r].length; c++) {
+            const cell = document.getElementById(`rot-dest-${r}-${c}`);
+            if (cell) cell.querySelector('.val').textContent = step.snapshotDest[r][c];
+          }
+        }
+
+        const srcCell = document.getElementById(`rot-src-${step.srcR}-${step.srcC}`);
+        const destCell = document.getElementById(`rot-dest-${step.destR}-${step.destC}`);
+
+        if (srcCell) srcCell.classList.add('active-a');
+        if (destCell) destCell.classList.add('active-target');
+
+        document.getElementById('rot-step-math').innerHTML = 
+          `Result[${step.destR}][${step.destC}] = Source[${step.srcR}][${step.srcC}] = <strong>${step.val}</strong>`;
+        document.getElementById('rot-step-desc').textContent = step.desc;
+      }
+    }
+
+    function stepRot() {
+      if (rotCurrentStepIdx < rotSteps.length) {
+        rotCurrentStepIdx++;
+        updateRotStepUI();
+      } else {
+        pauseRot();
+      }
+    }
+
+    function togglePlayRot() {
+      if (rotTimer) {
+        pauseRot();
+      } else {
+        if (rotCurrentStepIdx >= rotSteps.length) {
+          rotCurrentStepIdx = 0;
+          initRotation();
+        }
+        document.getElementById('rot-play-btn').textContent = 'Pause';
+        const speed = 1700 - parseInt(document.getElementById('rot-speed').value);
+        rotTimer = setInterval(() => {
+          if (rotCurrentStepIdx < rotSteps.length) {
+            stepRot();
+          } else {
+            pauseRot();
+          }
+        }, speed);
+      }
+    }
+
+    function pauseRot() {
+      if (rotTimer) {
+        clearInterval(rotTimer);
+        rotTimer = null;
+      }
+      const btn = document.getElementById('rot-play-btn');
+      if (btn) btn.textContent = 'Play';
+    }
+
+    // Dynamic Code Rendering Definitions
+    const CODE_SNIPPETS = {
+      mul_standard: {
+        title: "Standard / Brute Force Matrix Multiplication (Row × Col Dot Product)",
+        badge: "i → j → k loop • O(M · K · N) Time • O(1) Aux Space",
+        id: "code-mul-standard",
+        code: `/**
+ * Case 1: Standard / Brute Force Matrix Multiplication (M x K by K x N -> M x N)
+ * Works for both Rectangular (M x N) and Square (N x N) matrices.
+ *
+ * Algorithm / Steps:
+ * 1. Validate inner dimensions (cols of A === rows of B).
+ * 2. Create result matrix C of size M x N initialized with 0.
+ * 3. Dot product: for each cell (i, j), sum A[i][k] * B[k][j] for k in 0..K-1.
+ *
+ * Time Complexity:  O(M * K * N) -> O(N^3) for square N x N
+ * Space Complexity: O(1) auxiliary space (excluding result matrix of size M x N)
+ */
+export function multiplyMatrixBruteForce(
+  A: number[][],
+  B: number[][]
+): number[][] {
+  const M = A.length;
+  const K = A[0].length;
+  const B_rows = B.length;
+  const N = B[0].length;
+
+  if (K !== B_rows) {
+    throw new Error(
+      \`Dimension mismatch: cols of A (\${K}) must match rows of B (\${B_rows})\`
+    );
+  }
+
+  // Create result matrix of size M x N
+  const C: number[][] = Array.from({ length: M }, () => Array(N).fill(0));
+
+  // 3 nested loops: i -> j -> k (standard dot product)
+  for (let i = 0; i < M; i++) {
+    for (let j = 0; j < N; j++) {
+      let sum = 0;
+      for (let k = 0; k < K; k++) {
+        sum += A[i][k] * B[k][j];
+      }
+      C[i][j] = sum;
+    }
+  }
+
+  return C;
+}`
+      },
+      mul_cache: {
+        title: "Cache-Friendly Optimal Matrix Multiplication (Loop Reordering: i-k-j)",
+        badge: "i → k → j loop • O(M · K · N) Ops • Stride-1 Spatial Locality",
+        id: "code-mul-cache",
+        code: `/**
+ * Case 2: Cache-Friendly Optimal Matrix Multiplication (Loop reordering i-k-j)
+ *
+ * Why this is optimal in modern CPU architectures:
+ * - Standard i-j-k accesses column B[k][j] vertically, incurring a CPU cache miss on almost every k.
+ * - Loop order i-k-j accesses row B[k][j] and C[i][j] sequentially along contiguous memory rows (stride 1).
+ *   This drastically boosts CPU L1/L2 cache line hits and allows SIMD autovectorization.
+ *
+ * Time Complexity:  O(M * K * N) operations (3x to 10x faster execution wall-clock)
+ * Space Complexity: O(1) auxiliary space
+ */
+export function multiplyMatrixCacheOptimal(
+  A: number[][],
+  B: number[][]
+): number[][] {
+  const M = A.length;
+  const K = A[0].length;
+  const B_rows = B.length;
+  const N = B[0].length;
+
+  if (K !== B_rows) {
+    throw new Error(
+      \`Dimension mismatch: cols of A (\${K}) !== rows of B (\${B_rows})\`
+    );
+  }
+
+  const C: number[][] = Array.from({ length: M }, () => Array(N).fill(0));
+
+  // Loop reordered: i -> k -> j
+  for (let i = 0; i < M; i++) {
+    for (let k = 0; k < K; k++) {
+      const a_ik = A[i][k];
+      for (let j = 0; j < N; j++) {
+        // Continuous, sequential memory reads/writes across row j
+        C[i][j] += a_ik * B[k][j];
+      }
+    }
+  }
+
+  return C;
+}`
+      },
+      rot_brute: {
+        title: "Brute Force 90° Clockwise Rotation (Auxiliary Matrix)",
+        badge: "M × N or N × N • O(M · N) Time • O(M · N) Auxiliary Space",
+        id: "code-rot-brute",
+        code: `/**
+ * Case 1: Brute Force 90° Clockwise Rotation (Using Auxiliary Matrix)
+ * Works for BOTH Rectangular (M x N -> N x M) and Square (N x N -> N x N).
+ *
+ * Mathematical Mapping Formula:
+ *   For an element at original position (i, j):
+ *     Result[j][M - 1 - i] = Source[i][j]
+ *
+ * Steps:
+ * 1. Create a new matrix of size N x M (swapped dimensions).
+ * 2. Copy each element (i, j) into (j, M - 1 - i).
+ *
+ * Time Complexity:  O(M * N)
+ * Space Complexity: O(M * N) auxiliary memory allocated
+ */
+export function rotateMatrix90ClockwiseBruteForce(
+  matrix: number[][]
+): number[][] {
+  const M = matrix.length;
+  const N = matrix[0].length;
+
+  // New matrix has N rows and M columns
+  const rotated: number[][] = Array.from({ length: N }, () => Array(M).fill(0));
+
+  for (let i = 0; i < M; i++) {
+    for (let j = 0; j < N; j++) {
+      rotated[j][M - 1 - i] = matrix[i][j];
+    }
+  }
+
+  return rotated;
+}`
+      },
+      rot_optimal: {
+        title: "Solution 1: Optimal In-Place Rotation via Transpose + Reverse Rows",
+        badge: "Square N × N Only • O(N²) Time • O(1) Strictly In-Place",
+        id: "code-rot-optimal",
+        code: `/**
+ * Solution 1: Optimal In-Place 90° Clockwise Rotation (Transpose + Reverse)
+ * (LeetCode #48: Rotate Image)
+ *
+ * Mathematical Principle:
+ *   Rotation 90° Clockwise = HorizontalReflection( Transpose(Matrix) )
+ *
+ * Two Distinct Steps:
+ * 1. Transpose in-place: Swap across main diagonal (top-left to bottom-right):
+ *      swap(matrix[i][j], matrix[j][i]) for all j > i
+ * 2. Reverse each row in-place: Swap symmetric columns:
+ *      swap(matrix[i][left], matrix[i][right]) using two pointers
+ *
+ * Time Complexity:  O(N^2)
+ * Space Complexity: O(1) auxiliary space (no new 2D array allocated)
+ */
+export function rotateMatrix90ClockwiseOptimal(matrix: number[][]): void {
+  const N = matrix.length;
+
+  // Step 1: In-place Transpose (swap elements across the main diagonal)
+  for (let i = 0; i < N; i++) {
+    for (let j = i + 1; j < N; j++) {
+      const temp = matrix[i][j];
+      matrix[i][j] = matrix[j][i];
+      matrix[j][i] = temp;
+    }
+  }
+
+  // Step 2: Reverse each row in-place
+  for (let i = 0; i < N; i++) {
+    let left = 0;
+    let right = N - 1;
+    while (left < right) {
+      const temp = matrix[i][left];
+      matrix[i][left] = matrix[i][right];
+      matrix[i][right] = temp;
+      left++;
+      right--;
+    }
+  }
+}`
+      },
+      rot_layer: {
+        title: "Solution 2: Alternative Optimal In-Place Rotation (Concentric Rings / 4-Way Swaps)",
+        badge: "Square N × N Only • O(N²) Time • O(1) In-Place",
+        id: "code-rot-layer",
+        code: `/**
+ * Solution 2: Alternative Optimal In-Place 90° Clockwise Rotation (Concentric Rings)
+ * Rotates elements 4-at-a-time in concentric rings from outermost border to innermost center.
+ *
+ * Four-way cyclic swap logic for each ring layer:
+ *   top          = matrix[first][i]
+ *   matrix[first][i]             = matrix[last - offset][first]      // bottom-left -> top-left
+ *   matrix[last - offset][first] = matrix[last][last - offset]       // bottom-right -> bottom-left
+ *   matrix[last][last - offset]  = matrix[i][last]                   // top-right -> bottom-right
+ *   matrix[i][last]              = top                               // top-left -> top-right
+ *
+ * Time Complexity:  O(N^2)
+ * Space Complexity: O(1) in-place
+ */
+export function rotateMatrix90ClockwiseLayerByLayer(matrix: number[][]): void {
+  const N = matrix.length;
+
+  for (let layer = 0; layer < Math.floor(N / 2); layer++) {
+    const first = layer;
+    const last = N - 1 - layer;
+
+    for (let i = first; i < last; i++) {
+      const offset = i - first;
+
+      // 1. Save top-left
+      const top = matrix[first][i];
+
+      // 2. Bottom-left -> Top-left
+      matrix[first][i] = matrix[last - offset][first];
+
+      // 3. Bottom-right -> Bottom-left
+      matrix[last - offset][first] = matrix[last][last - offset];
+
+      // 4. Top-right -> Bottom-right
+      matrix[last][last - offset] = matrix[i][last];
+
+      // 5. Top-left -> Top-right
+      matrix[i][last] = top;
+    }
+  }
+}`
+      }
+    };
+
+    function highlightSyntax(code) {
+      return code
+        .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+        .replace(/(\/\*\*[\s\S]*?\*\/|\/\/[^\n]*)/g, '<span class="code-comment">$1</span>')
+        .replace(/\b(export|function|const|let|for|if|throw|new|return|while)\b/g, '<span class="code-keyword">$1</span>')
+        .replace(/\b(number|string|boolean|void|Error|Array)\b/g, '<span class="code-type">$1</span>')
+        .replace(/(`[^`]*`)/g, '<span class="code-string">$1</span>')
+        .replace(/\b([0-9]+)\b/g, '<span class="code-number">$1</span>');
+    }
+
+    function createCodeCard(item) {
+      return `
+        <div class="code-card">
+          <div class="code-header">
+            <span class="code-title">
+              ${item.title}
+              <span class="badge-case">${item.badge}</span>
+            </span>
+            <button class="copy-btn" onclick="copySnippet('${item.id}', this)">Copy Code</button>
+          </div>
+          <pre class="code-block" id="${item.id}"><code>${highlightSyntax(item.code)}</code></pre>
+        </div>
+      `;
+    }
+
+    function copySnippet(id, btn) {
+      const snippet = Object.values(CODE_SNIPPETS).find(s => s.id === id);
+      if (!snippet) return;
+      navigator.clipboard.writeText(snippet.code).then(() => {
+        const orig = btn.textContent;
+        btn.textContent = 'Copied!';
+        btn.style.borderColor = 'var(--highlight-res)';
+        btn.style.color = 'var(--highlight-res)';
+        setTimeout(() => {
+          btn.textContent = orig;
+          btn.style.borderColor = '';
+          btn.style.color = '';
+        }, 1800);
+      });
+    }
+
+    function renderMulCode(method) {
+      const container = document.getElementById('mul-code-container');
+      if (!container) return;
+      let cards = [];
+      if (method === 'standard') {
+        cards.push(createCodeCard(CODE_SNIPPETS.mul_standard));
+      } else if (method === 'cache-optimal') {
+        cards.push(createCodeCard(CODE_SNIPPETS.mul_cache));
+      }
+      container.innerHTML = cards.join('');
+    }
+
+    function renderRotCode(approach, type) {
+      const container = document.getElementById('rot-code-container');
+      if (!container) return;
+      let cards = [];
+      if (approach === 'brute') {
+        cards.push(createCodeCard(CODE_SNIPPETS.rot_brute));
+      } else if (approach === 'optimal') {
+        // Show all multiple optimal solutions for square matrix rotation!
+        cards.push(createCodeCard(CODE_SNIPPETS.rot_optimal));
+        cards.push(createCodeCard(CODE_SNIPPETS.rot_layer));
+      }
+      container.innerHTML = cards.join('');
+    }
+
+    // Initialize both on load
+    window.addEventListener('DOMContentLoaded', () => {
+      initMultiplication();
+      initRotation();
+    });
+  </script>
+</body>
+</html>
